@@ -1,0 +1,148 @@
+Trabalho G2 - Pensamento Computacional - Mini Teleprompter com Arduino
+
+
+Integrantes
+Enzo Arthur Hammes Hendges
+Francisco Toscani
+
+
+Qual será a ideia principal do trabalho?
+Construção de um mini teleprompter, o mesmo servirá como apoio para pessoas que precisam falar em público ou gravar vídeos, permitindo acompanhar o texto sem depender totalmente da memória. Este equipamento irá exibir um roteiro em uma tela com rolagem automática e velocidade ajustável. O aparelho funcionará da seguinte maneira: o Cartão SD conecta ao arduino, o arduino faz a leitura do que contém no cartão SD, apresentando na tela i2c o texto em txt contido no cartão SD.
+
+
+Como essa ideia surgiu?
+A ideia surgiu, principalmente por conta que várias pessoas sentem nervosismo e até mesmo ansiedade durante apresentações, principalmente os estudantes e acabam esquecendo partes importantes do conteúdo. 
+
+
+Por que a dupla escolheu essa proposta? 
+Pois consideramos necessário dar importância a qualidade das apresentações especialmente de estudantes, auxiliando-os a desenvolver as habilidades de falar em público e tranquilizá-los na hora das apresentações.
+
+
+Qual situação, problema ou necessidade será trabalhada?
+Diversas questões são abordadas, como a ansiedade ao apresentar ou falar em público, a necessidade de consultar “colas”, dificuldade em manter um ritmo de fala…
+
+
+O que a dupla pretende criar ao final?
+Um protótipo funcional de um mini teleprompter, apresentando sua lógica de funcionamento e resolvendo os problemas propostos.
+
+
+
+
+Quem poderia utilizar ou se beneficiar dessa solução?
+Estudantes, palestrantes, jornalistas, empresários, professores ou qualquer pessoa que precisa de apoio em uma fala em público
+
+Por que essa solução faria sentido?
+Pois, atualmente, o mundo está se tornando cada vez mais volátil, o que diminui consideravelmente o foco da sociedade no geral.
+
+
+O que aconteceria se essa solução fosse aplicada na prática?
+Diversas pessoas melhorariam a oratória, dicção, diminuiriam o nervosismo em apresentações, pois teriam esse apoio visual para não terem que depender totalmente da memória.
+
+O que a solução deverá fazer?
+Ler um arquivo de texto (.txt) armazenado em um cartão SD, exibir o conteúdo do arquivo no display LCD/OLED com comunicação I2C, realizar a rolagem automática do texto na tela, permitir o ajuste da velocidade de rolagem pelo usuário e guardar comandos do usuário para iniciar, pausar ou reiniciar a leitura
+
+Quais informações serão necessárias para ela funcionar?
+Arquivo de texto (.txt) com o roteiro a ser exibido, configuração de velocidade de rolagem (definida pelo usuário), endereço I2C do display (configurado no código), tamanho da fonte para exibição no display, número de linhas visíveis no display de uma vez
+
+Quais ações deverão acontecer?
+O Arduino inicializa a comunicação com o módulo SD e com o display I2C; sistema verifica se o cartão e o arquivo existem. Abertura do arquivo no cartão SD e leitura do conteúdo linha por linha. As linhas são mostradas no display e atualizadas a cada intervalo de tempo configurado, com rolagem contínua até o fim do arquivo. Leitura dos botões para pausar/retomar/reiniciar e ajuste de velocidade via potenciômetro.
+
+Quais decisões a solução precisará tomar?
+Se o cartão SD está inserido ou não, se o arquivo .txt existe, quando avançar para a próxima linha, se chegou ao fim do arquivo, se o botão de pausa foi pressionado, qual velocidade usar.
+
+
+Qual será o resultado esperado?
+Um dispositivo funcional que leia automaticamente um arquivo de texto de um cartão SD e exiba seu conteúdo de forma rolante em um display I2C. O usuário poderá ajustar a velocidade da rolagem e controlar a reprodução. O aparelho deverá ser compacto, de baixo custo e fácil de operar, servindo como apoio eficaz para apresentações e gravações de vídeo.
+
+Funcionamento da solução:
+1. O usuário salva o roteiro como arquivo .txt no cartão SD e insere o cartão no módulo conectado ao Arduino.
+2. O Arduino liga, inicializa o display I2C e o módulo SD, verifica a presença do arquivo e exibe uma mensagem de boas-vindas.
+3. O Arduino lê linha por linha do arquivo e exibe no display, rolando o texto na velocidade configurada.
+4. O usuário pode pausar, retomar ou reiniciar a leitura usando botões físicos, e ajustar a velocidade via potenciômetro.
+
+Decomposição
+Partes da solução:
+1. Desenvolvimento da ideia
+2. Primeiros passos: analisar se é viável
+3. Testes no TinkerCad
+4.  Montagem do projeto físico
+5. Criar um arquivo de legenda
+6. Implementar no projeto
+7. Teste do projeto físico finalizado
+
+Reconhecimento de padrões
+
+
+Existem ações repetidas?
+Sim, a ação de "ler uma linha do arquivo e exibi-la no display" se repete continuamente até o fim do texto. A leitura dos botões também ocorre em loop constante.
+Existem etapas que seguem uma sequência?
+Sim, o fluxo segue sempre: inicializar, verificar SD, abrir arquivo, ler linha, exibir linha, aguardar delay, ler próxima linha.
+Existem situações semelhantes que podem usar a mesma lógica?
+Sim, o tratamento de "SD não encontrado" e "arquivo não encontrado" segue a mesma lógica: exibir mensagem de erro e parar a execução.
+Alguma parte da solução pode ser reaproveitada?
+Sim, a função de exibir uma linha no display pode ser reaproveitada tanto para o texto do roteiro quanto para mensagens de erro e status do sistema.
+Padrões encontrados: loop de leitura e exibição, padrão de verificação antes de prosseguir; controle de tempo com delay; leitura de entradas do usuário (botões e potenciômetro).
+
+Abstração
+O que é indispensável para a solução funcionar?
+Arduino, módulo SD, display I2C, cartão SD com arquivo .txt e código de leitura/exibição.
+O que pode ficar de fora nesta primeira versão?
+Ajuste de velocidade via potenciômetro (velocidade fixa no código), botão de reiniciar, caixa física do dispositivo e suporte a múltiplos arquivos.
+Quais elementos precisam aparecer na simulação? Leitura do arquivo, exibição no display, rolagem automática e botão de pausa.
+Quais detalhes podem ser melhorados apenas depois?
+Estética, ajuste fino de velocidade por hardware, suporte a acentuação e conectividade wireless.
+Elementos essenciais da solução:
+Arduino, Módulo SD, Display I2C, arquivo .txt, lógica de leitura e exibição sequencial.
+
+
+
+
+Algoritmo
+INÍCIO
+  . Inicializar display I2C
+  . Inicializar módulo SD
+   SE cartão SD não encontrado ENTÃO:
+       Exibir "Erro: SD ausente" no display
+       PARAR
+  Abrir arquivo "roteiro.txt" do SD
+  SE arquivo não encontrado ENTÃO:
+       Exibir "Erro: arquivo ausente" no display
+       PARAR
+  Exibir "Pressione iniciar"
+   AGUARDAR botão de início ser pressionado
+  ENQUANTO houver linhas no arquivo FAÇA:
+        Ler velocidade (potenciômetro ou valor fixo)
+        Verificar se botão de pausa foi pressionado
+          SE SIM: aguardar até botão ser pressionado novamente
+        Ler próxima linha do arquivo
+       Limpar display
+       Exibir linha no display
+       Aguardar (delay conforme velocidade)
+   Fechar arquivo
+  Exibir "Fim do roteiro" no display
+FIM
+
+Simulação e protótipo
+O que será simulado:
+circuito com Arduino Uno, módulo SD Card, display LCD com módulo I2C e dois botões (pausa e reiniciar), simulado no Tinkercad. 
+O que a dupla conseguiu iniciar:
+Finalizamos o projeto físico no dia 18/06, funcionando corretamente.
+Testes e melhorias
+Diversos testes foram feitos, desmembramos o projeto em partes menores, e no final, testamos tudo junto.
+
+
+
+
+Conclusão final da dupla
+O que a dupla aprendeu?
+A integrar componentes eletrônicos com Arduino usando I2C, estruturar código para leitura de arquivos externos e como o pensamento computacional organiza o desenvolvimento.
+Como o pensamento computacional ajudou?
+A decomposição dividiu o projeto em partes gerenciáveis; o reconhecimento de padrões simplificou o código; a abstração manteve o foco no essencial; o algoritmo deu clareza à sequência antes de programar.
+A solução funcionou como esperado?
+Sim, em grande parte. O protótipo demonstrou a funcionalidade central — leitura e exibição rolante — com pequenos ajustes necessários durante os testes.
+O que poderia ser melhorado numa próxima versão?
+Conectividade Bluetooth/Wi-Fi para enviar o roteiro pelo celular, display maior (OLED 128x64), aplicativo para formatar roteiros, controle de velocidade por voz e caixa impressa em 3D.
+
+Conclusão: O desenvolvimento do mini teleprompter foi uma experiência que uniu eletrônica, programação e pensamento computacional. O projeto mostra que é possível criar soluções acessíveis e funcionais para problemas cotidianos reais. A dupla concluiu com um protótipo funcional e com aprendizado sólido sobre o processo de desenvolvimento tecnológico de forma organizada.
+
+
