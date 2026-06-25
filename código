@@ -1,0 +1,143 @@
+#include <LiquidCrystal.h>
+#include <SPI.h>
+#include <SD.h>
+
+// LCD: RS, EN, D4, D5, D6, D7
+LiquidCrystal lcd(7, 6, 5, 4, 3, 2);
+
+const int botaoPausa = 8;
+const int botaoReiniciar = 9;
+const int pinoPotenciometro = A0;
+const int pinoCS = 10;
+
+const char* nomeArquivo = "roteiro.txt";
+
+File arquivo;
+String linhaAtual = "";
+int posicaoRolagem = 0;
+bool pausado = false;
+
+unsigned long ultimoMovimento = 0;
+
+void setup() {
+  Serial.begin(9600);
+  lcd.begin(16, 2);
+
+  pinMode(botaoPausa, INPUT);      // logica pull-down: ja tem resistor externo
+  pinMode(botaoReiniciar, INPUT);  // logica pull-down: ja tem resistor externo
+
+  lcd.setCursor(0, 0);
+  lcd.print("Iniciando SD...");
+  delay(500);
+
+  if (!SD.begin(pinoCS)) {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Erro: SD ausente");
+    Serial.println("Falha ao iniciar o SD.");
+    while (true);
+  }
+
+  arquivo = SD.open(nomeArquivo);
+  if (!arquivo) {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Erro: arquivo");
+    lcd.setCursor(0, 1);
+    lcd.print("nao encontrado");
+    Serial.println("Arquivo roteiro.txt nao encontrado.");
+    while (true);
+  }
+
+  lcd.clear();
+  carregarProximaLinha();
+}
+
+void loop() {
+  verificarBotoes();
+
+  if (pausado) {
+    return;
+  }
+
+  unsigned long agora = millis();
+  int velocidade = lerVelocidade();
+
+  if (agora - ultimoMovimento < (unsigned long)velocidade) {
+    return; // ainda não é hora de mover
+  }
+  ultimoMovimento = agora;
+
+  if (linhaAtual.length() <= 16) {
+    lcd.setCursor(0, 0);
+    lcd.print(linhaAtual);
+    lcd.print("                "); // limpa restos na tela
+    carregarProximaLinha();
+  } else {
+    if (posicaoRolagem > (int)linhaAtual.length() - 16) {
+      carregarProximaLinha();
+    } else {
+      lcd.setCursor(0, 0);
+      lcd.print(linhaAtual.substring(posicaoRolagem, posicaoRolagem + 16));
+      posicaoRolagem++;
+    }
+  }
+}
+
+// Verifica os dois botões a cada loop, sem travar o programa
+// Logica pull-down: pressionado = HIGH, solto = LOW
+void verificarBotoes() {
+  static unsigned long ultimoClique = 0;
+  unsigned long agora = millis();
+
+  if (digitalRead(botaoPausa) == HIGH && (agora - ultimoClique) > 300) {
+    ultimoClique = agora;
+    pausado = !pausado;
+    Serial.println(pausado ? "PAUSADO" : "RETOMADO");
+  }
+
+  if (digitalRead(botaoReiniciar) == HIGH && (agora - ultimoClique) > 300) {
+    ultimoClique = agora;
+    Serial.println("REINICIANDO");
+    reiniciarArquivo();
+  }
+}
+
+int lerVelocidade() {
+  int leitura = analogRead(pinoPotenciometro);
+  return map(leitura, 0, 1023, 800, 200);
+}
+
+void carregarProximaLinha() {
+  if (!arquivo.available()) {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Fim do roteiro");
+    arquivo.close();
+    pausado = true; // trava aqui até reiniciar
+    return;
+  }
+
+  linhaAtual = "";
+  while (arquivo.available()) {
+    char c = arquivo.read();
+    if (c == '\n') break;
+    if (c != '\r') linhaAtual += c;
+  }
+
+  posicaoRolagem = 0;
+  lcd.clear();
+}
+
+void reiniciarArquivo() {
+  if (arquivo) arquivo.close();
+  arquivo = SD.open(nomeArquivo);
+  pausado = false;
+  posicaoRolagem = 0;
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Reiniciando...");
+  delay(500);
+  lcd.clear();
+  carregarProximaLinha();
+}
