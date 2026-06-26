@@ -1,0 +1,11 @@
+A ideia surge a partir da análise de vários problemas: dificuldades em apresentações, memória sobrecarregada, nervosismo/ansiedade, falta de ritmo. Isso afeta tanto estudantes, como, até mesmo, professores.
+
+Primeiro, analisamos o projeto no tinkercad, (se era viável e cumpria com os requisitos), depois pensamos em como iríamos aplicar o projeto na prática, montamos o projeto físico, fizemos o código, e colocamos pra funcionar.
+
+Na decomposição do projeto, dividi-lo em etapas facilitou o trabalho, encontrar onde haviam repetições, dar importância apenas aos detalhes essenciais, e no desenvolvimento do algoritmo.
+
+É inserido o cartão sd em um leitor, criado um arquivo .txt, vinculado com o cartão sd, depois o cartão sd é retirado do leitor e inserido no módulo leitor, o arduino faz a leitura, e exibe o texto do arquivo .txt no display lcd.
+
+As maiores dificuldades encontradas foram na parte inicial do projeto, onde era preciso entender o trabalho, e decidir por onde era preciso começar. Depois, como ainda não nos aprofundamos ainda na parte de códigos, também tivemos alguma dificuldade.
+
+Algumas possíveis futuras melhorias para o futuro poderiam ser um display maior, conexão wireless e controle de velocidade por voz.
